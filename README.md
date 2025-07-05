@@ -1,39 +1,38 @@
-```markdown
-**GateKeep** is a FastAPI-based reverse proxy with geo blocking, static file caching, and a Django-powered analytics dashboard. Designed with asyncio for high-performance request handling.
-
-## Features
-
-- Reverse proxy for any backend (configurable via `.env`)
-- Built with asyncio for concurrent request handling
-- Country-based blocking (manage via Django dashboard)
-- Custom Async LRU cache implemented in python
-- Static file caching for faster static files delivery
-- Request logging and analytics (view in dashboard)
 
 
-## Quick Start
+# GateKeep
 
-1. **Clone the repo**
+**GateKeep** is a FastAPI-based reverse proxy with geo-blocking, static file caching, and a Django-powered analytics dashboard. Built using `asyncio` for high-performance request handling.
 
-2. **Install dependencies**
-   ```
-   pip install -r requirements.txt
-   ```
+## 🔧 Features
 
-3. **Configure environment variables**  
-   Make a `.env` and set `BACKEND_URL` and database credentials along with a DJANGO secret key.
+-  Reverse proxy for any backend (`BACKEND_URL` via `.env`)
+-  Async FastAPI + custom LRU caching
+- Country-based blocking (via Django dashboard)
+- Request logging and analytics
+- Static file caching for performance
 
-4. **Run Django backend**
-   ```
-   python manage.py migrate
-   python manage.py runserver
-   ```
+🚀 Quick Start
 
-5. **Run FastAPI proxy**
-   ```
-   uvicorn proxy.main:app --reload --port 9500
-   ```
+```bash
+git clone https://github.com/ajithb236/gatekeep.git
+cd gatekeep
+pip install -r requirements.txt
+````
 
+Create a `.env` file:
+Run Django:
+
+```bash
+python manage.py migrate
+python manage.py runserver
+```
+
+Run FastAPI proxy:
+
+```bash
+uvicorn proxy.main:app --port 9500
+```
 
 
 

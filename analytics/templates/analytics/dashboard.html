@@ -2,65 +2,66 @@
 
 {% block content %}
 <div class="container-fluid">
-    <div class="row">
+    <div class="row mb-4">
         <!-- Metrics Overview -->
-        <div class="col-md-3 mb-4">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Total Requests</h5>
-                    <h2>{{ total_requests }}</h2>
-                </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-primary shadow-sm h-100">
+            <div class="card-body d-flex flex-column justify-content-center align-items-center">
+                <i class="bi bi-bar-chart-fill display-4 mb-2"></i>
+                <h6 class="text-uppercase">Total Requests</h6>
+                <h2 class="fw-bold mb-0">{{ total_requests }}</h2>
             </div>
-            
-            {% comment %} <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Last 24 Hours</h5>
-                    <h2>{{ requests_24h }}</h2>
-                </div>
-            </div> {% endcomment %}
+            </div>
         </div>
-        <div class="col-md-3 mb-4">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Last 24 Hours</h5>
-                    <h2>{{ requests_24h }}</h2>
+
+        <!-- Last 24 Hours -->
+        <div class="col-md-3">
+            <div class="card text-white bg-success shadow-sm h-100">
+            <div class="card-body d-flex flex-column justify-content-center align-items-center">
+                <i class="bi bi-clock-history display-4 mb-2"></i>
+                <h6 class="text-uppercase">Last 24 Hours</h6>
+                <h2 class="fw-bold mb-0">{{ requests_24h }}</h2>
+            </div>
+            </div>
+        </div>
+
+        <!-- Response Time Metrics -->
+        <div class="col-md-6">
+            <div class="card shadow-sm h-100">
+            <div class="card-header bg-light">
+                <h5 class="card-title mb-0">
+                <i class="bi bi-speedometer2 me-2"></i> Response Time Metrics
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                <div class="col-md-6 border-end">
+                    <h6 class="text-muted">Average</h6>
+                    <h2 class="display-5 fw-bold text-primary">{{ avg_response_time|floatformat:2 }}</h2>
+                    <p class="text-muted small">milliseconds</p>
+                </div>
+                <div class="col-md-6">
+                    <ul class="list-group list-group-flush text-start">
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span>Minimum</span>
+                        <span class="badge bg-success rounded-pill">{{ min_response_time|floatformat:2 }} ms</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span>Maximum</span>
+                        <span class="badge bg-danger rounded-pill">{{ max_response_time|floatformat:2 }} ms</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span>P95</span>
+                        <span class="badge bg-warning rounded-pill">{{ p95_response_time|floatformat:2 }} ms</span>
+                    </li>
+                    </ul>
+                </div>
                 </div>
             </div>
-        </div> 
-        <!-- Replace the existing response time card with this enhanced one -->
-        <div class="col-md-6 mb-4">
-            <div class="card">
-                <div class="card-header bg-light">
-                    <h5 class="card-title mb-0">Response Time Metrics</h5>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-6 text-center border-end">
-                            <h6 class="text-muted">Average</h6>
-                            <h2 class="display-5 mb-0 fw-bold text-primary">{{ avg_response_time|floatformat:2 }}</h2>
-                            <p class="text-muted">milliseconds</p>
-                        </div>
-                        <div class="col-md-6">
-                            <ul class="list-group list-group-flush">
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    <span>Minimum</span>
-                                    <span class="badge bg-success rounded-pill">{{ min_response_time|floatformat:2 }} ms</span>
-                                </li>
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    <span>Maximum</span>
-                                    <span class="badge bg-danger rounded-pill">{{ max_response_time|floatformat:2 }} ms</span>
-                                </li>
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    <span>P95</span>
-                                    <span class="badge bg-warning rounded-pill">{{ p95_response_time|floatformat:2 }} ms</span>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
+    
     <div class="row">
         <!-- Status Codes -->
         <div class="col-md-6 mb-4">
