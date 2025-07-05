@@ -1,0 +1,68 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+*.pyo
+*.pyd
+*.py,cover
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+pip-wheel-metadata/
+*.manifest
+*.spec
+
+# Django
+db.sqlite3
+*.log
+media/
+staticfiles/
+static/
+.env
+.env.*
+local_settings.py
+
+# FastAPI/Uvicorn
+instance/
+*.db
+
+# VSCode
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Migrations
+**/migrations/
+!**/migrations/__init__.py
+
+# Test/coverage
+htmlcov/
+.coverage
+.tox/
+.nox/
+.cache/
+.pytest_cache/
+coverage.xml
+
+# Docker
+*.pid
+*.pid.lock
+
+# MyPy
+.mypy_cache/
+.dmypy.json
+
+# Pyright
+.pyright/
+
+# Other
+*.swp
+*.swo
+.idea/

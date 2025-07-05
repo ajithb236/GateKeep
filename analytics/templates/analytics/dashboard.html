@@ -1,0 +1,156 @@
+{% extends "analytics/base.html" %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <!-- Metrics Overview -->
+        <div class="col-md-3 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Total Requests</h5>
+                    <h2>{{ total_requests }}</h2>
+                </div>
+            </div>
+            
+            {% comment %} <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Last 24 Hours</h5>
+                    <h2>{{ requests_24h }}</h2>
+                </div>
+            </div> {% endcomment %}
+        </div>
+        <div class="col-md-3 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Last 24 Hours</h5>
+                    <h2>{{ requests_24h }}</h2>
+                </div>
+            </div>
+        </div> 
+        <!-- Replace the existing response time card with this enhanced one -->
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header bg-light">
+                    <h5 class="card-title mb-0">Response Time Metrics</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 text-center border-end">
+                            <h6 class="text-muted">Average</h6>
+                            <h2 class="display-5 mb-0 fw-bold text-primary">{{ avg_response_time|floatformat:2 }}</h2>
+                            <p class="text-muted">milliseconds</p>
+                        </div>
+                        <div class="col-md-6">
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <span>Minimum</span>
+                                    <span class="badge bg-success rounded-pill">{{ min_response_time|floatformat:2 }} ms</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <span>Maximum</span>
+                                    <span class="badge bg-danger rounded-pill">{{ max_response_time|floatformat:2 }} ms</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <span>P95</span>
+                                    <span class="badge bg-warning rounded-pill">{{ p95_response_time|floatformat:2 }} ms</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <!-- Status Codes -->
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Status Codes</h5>
+                    <canvas id="statusChart"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Top Countries -->
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Top Countries</h5>
+                    <canvas id="countriesChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <!-- Top Pages -->
+        <div class="col-md-12 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Top Pages</h5>
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Path</th>
+                                    <th>Requests</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for page in top_pages %}
+                                <tr>
+                                    <td>{{ page.path }}</td>
+                                    <td>{{ page.count }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Status codes chart
+    const statusCtx = document.getElementById('statusChart').getContext('2d');
+    new Chart(statusCtx, {
+        type: 'doughnut',
+        data: {
+            labels: [{% for item in status_codes %}'{{ item.http_status }}'{% if not forloop.last %},{% endif %}{% endfor %}],
+            datasets: [{
+                data: [{% for item in status_codes %}{{ item.count }}{% if not forloop.last %},{% endif %}{% endfor %}],
+                backgroundColor: [
+                    'rgba(75, 192, 192, 0.5)',
+                    'rgba(255, 99, 132, 0.5)',
+                    'rgba(54, 162, 235, 0.5)',
+                    'rgba(255, 206, 86, 0.5)',
+                ]
+            }]
+        }
+    });
+    
+    // Countries chart
+    const countriesCtx = document.getElementById('countriesChart').getContext('2d');
+    new Chart(countriesCtx, {
+        type: 'bar',
+        data: {
+            labels: [{% for item in top_countries %}'{{ item.country }}'{% if not forloop.last %},{% endif %}{% endfor %}],
+            datasets: [{
+                label: 'Requests by Country',
+                data: [{% for item in top_countries %}{{ item.count }}{% if not forloop.last %},{% endif %}{% endfor %}],
+                backgroundColor: 'rgba(54, 162, 235, 0.5)'
+            }]
+        },
+        options: {
+            indexAxis: 'y'
+        }
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,79 @@
+{% extends "analytics/base.html" %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Block a Country</h5>
+                </div>
+                <div class="card-body">
+                    <form method="post" action="{% url 'blocked-countries' %}" class="row g-3">
+                        {% csrf_token %}
+                        <div class="col-md-4">
+                            <label for="country_name" class="form-label">Country</label>
+                            <select name="country_name" id="country_name" class="form-select" required>
+                                <option value="">Select a country</option>
+                                {% for country in available_countries %}
+                                    <option value="{{ country.country }}">{{ country.country }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="reason" class="form-label">Reason (optional)</label>
+                            <input type="text" name="reason" id="reason" class="form-control" placeholder="Reason for blocking">
+                        </div>
+                        <div class="col-md-2 d-flex align-items-end">
+                            <button type="submit" class="btn btn-primary w-100">Block Country</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Currently Blocked Countries</h5>
+                </div>
+                <div class="card-body">
+                    {% if blocked_countries %}
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Country</th>
+                                        <th>Reason</th>
+                                        <th>Blocked Since</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for country in blocked_countries %}
+                                    <tr>
+                                        <td>{{ country.country_name }}</td>
+                                        <td>{{ country.reason|default:"-" }}</td>
+                                        <td>{{ country.blocked_at|date:"F j, Y, g:i a" }}</td>
+                                        <td>
+                                            <form method="post" action="{% url 'unblock-country' country.country_name %}">
+                                                {% csrf_token %}
+                                                <button type="submit" class="btn btn-sm btn-danger">Unblock</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <p class="text-center my-3">No countries are currently blocked.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
