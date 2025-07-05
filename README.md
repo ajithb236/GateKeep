@@ -1,11 +1,10 @@
 ```markdown
-# GateKeep: Reverse Proxy & Analytics
-
-**GateKeep** is a FastAPI-based reverse proxy with country blocking, static file caching, and a Django-powered analytics dashboard.
+**GateKeep** is a FastAPI-based reverse proxy with geo blocking, static file caching, and a Django-powered analytics dashboard. Designed with asyncio for high-performance request handling.
 
 ## Features
 
 - Reverse proxy for any backend (configurable via `.env`)
+- Built with asyncio for concurrent request handling
 - Country-based blocking (manage via Django dashboard)
 - Custom Async LRU cache implemented in python
 - Static file caching for faster static files delivery
