@@ -141,8 +141,10 @@ async def proxy(request: Request, path: str):
             any(path.endswith(ext) for ext in STATIC_EXTENSIONS)
         )
         if is_static and request.method == "GET":
+            
             cached = await static_cache.get(path)
             if cached:
+                #return cached static
                 content, status_code, headers, media_type = cached
                 return Response(
                     content=content,
@@ -202,12 +204,17 @@ async def proxy(request: Request, path: str):
         for sc in backend_response.headers.get_list("set-cookie"):
             proxy_response.headers.append("set-cookie", sc)
 
-
-        is_static = (
-            any(path.startswith(prefix) for prefix in STATIC_PATHS) or
-            any(path.endswith(ext) for ext in STATIC_EXTENSIONS)
-        )
-
+        if is_static and request.method == "GET" and backend_response.status_code == 200:
+            #cache static response
+            await static_cache.set(
+                path,
+                (
+                    backend_response.content,
+                    backend_response.status_code,
+                    dict(response_headers),
+                    backend_response.headers.get("content-type", "text/html")
+                )
+            )
         if not is_static:
             ip = request.headers.get("x-forwarded-for", request.client.host)
             status = backend_response.status_code
