@@ -1,0 +1,10 @@
+django
+fastapi
+uvicorn
+httpx
+sqlalchemy
+asyncpg
+python-dotenv
+djangorestframework
+numpy
+psycopg2-binary
