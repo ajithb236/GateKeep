@@ -5,6 +5,7 @@ import zoneinfo
 from fastapi import FastAPI, Request, Response
 import httpx
 from fastapi.responses import PlainTextResponse
+from urllib.parse import urlparse, urljoin
 from .async_LRU import AsyncLRUCache
 from .database import SessionLocal, RequestLog,BlockedCountry
 from sqlalchemy import select
@@ -23,7 +24,7 @@ BACKEND_URL = os.getenv("BACKEND_URL")
 http_client = httpx.AsyncClient(
     timeout=10.0,
     limits=httpx.Limits(max_keepalive_connections=20, max_connections=100),
-    follow_redirects=False 
+    follow_redirects=True
 )
 countryLookupClient = httpx.AsyncClient(
     timeout=5.0,
@@ -38,7 +39,8 @@ blocked_countries_cache = set()
 # Log queue
 request_log_queue = asyncio.Queue(maxsize=1000)
 
-# Excluded headers
+MAX_BODY_SIZE = 10 * 1024 * 1024
+
 EXCLUDED_HEADERS = {
     "connection", "keep-alive", "transfer-encoding", "te",
     "trailer", "upgrade", "proxy-connection"
@@ -153,27 +155,24 @@ async def proxy(request: Request, path: str):
                     media_type=media_type
                 )
 
-        if path:
-            url = f"{BACKEND_URL}/{path}"
-        else:
-            url = BACKEND_URL
+        url = urljoin(BACKEND_URL, "/" + path) if path else BACKEND_URL
         method = request.method
         headers = {}
 
         for k,v in request.headers.items():
-            # Skip excluded headers
             if k.lower() in EXCLUDED_HEADERS:
                 continue
             headers[k.lower()] = v
 
-        # Explicitly forward cookie if present
         if "cookie" in request.headers:
             headers["cookie"] = request.headers["cookie"]
 
-        # Forward host header if needed
-        headers["host"] = request.headers.get("host", "")
-
+        headers["host"] = urlparse(BACKEND_URL).netloc
+        headers["referer"] = BACKEND_URL
+        
         body = await request.body()
+        if len(body) > MAX_BODY_SIZE:
+            return PlainTextResponse("Payload too large", status_code=413)
 
         backend_response = await http_client.request(
             method=method,

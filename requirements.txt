@@ -8,3 +8,5 @@ python-dotenv
 djangorestframework
 numpy
 psycopg2-binary
+django
+email-validator
